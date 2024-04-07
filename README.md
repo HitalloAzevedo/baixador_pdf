@@ -2,5 +2,9 @@
  app de terminal, que faz download de pfd's com rapidez!
 
 # Modo de usar
-```pip install -r requirements.txt```<br>
-```python3 main.py```
+```
+git clone https://github.com/hitalloazevedo/pdf-downloader.git
+cd pdf-downloader
+pip install -r requirements.txt
+python main.py
+```
