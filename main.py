@@ -1,54 +1,55 @@
-author = 'Hitallo Azevedo'
-version = 'v0.0.1'
-
 import requests
 from os import path, mkdir, listdir
 
-folder_name = 'downloaded_files'
+AUTHOR = 'Hitallo Azevedo'
+VERSION = 'v0.0.2'
 
-def exist():
-    p = listdir()
-    if folder_name not in p:
-        return False    
+outputFolderName = 'download-output'
+
+def existFile(folderName):
+    if folderName in listdir():
+        return True    
     else:
-        return True
+        return False
 
-
-def header(txt):
+def header(txt, author, version):
     print('=' * 60)
-    print(txt.center(60))
+    print('|' + txt.center(58) + '|')
+    print('=' * 60)
+    print(f'Created by {author}')
+    print(f'Version: {version}')
     print('=' * 60)
 
+def writeFile(outputPath, content):
+    with open(outputPath, 'wb+') as file:
+        file.write(content)
 
 def main():
-    header(f'Baixador de PDF {version}')
-    print(f'Criado por {author}')
-    print('=' * 60)
+    header(f'PDF Downloader', AUTHOR, VERSION)
 
-    url = str(input('Link: ')).strip()
-    name = str(input('Nome do arquivo: '))
+    fileUrl = str(input('Link do arquivo: ')).strip().lower()
+    fileName = str(input('Nome do arquivo: ')).strip()
 
-    if exist() == True:
-        pass
-    else:
-        mkdir(folder_name)
+    if not existFile(outputFolderName):
+        mkdir(outputFolderName)
 
-    p = path.join(folder_name, name+'.pdf')
+    outputFilePath = path.join(outputFolderName, fileName + '.pdf')
 
     try:
-        r = requests.get(url)
+        response = requests.get(fileUrl)
     except (requests.ConnectionError):
         print('Erro na conexão!')
-    except(requests.RequestException):
+    except (requests.RequestException):
         print('URL inválida!')
+    except (Exception):
+        print(f'Erro: {Exception}')
     else:
-        print('Iniciando Download...')
-        if r.status_code == 200:
-            with open(p, 'wb+') as file:
-                file.write(r.content)
-            
-            print(f'Download finalizado, salvo em: {p}')
-
+        if response.status_code == 200:
+            print('Iniciando Download...')
+            writeFile(outputFilePath, response.content)
+            print(f'Download finalizado, salvo em: {outputFilePath}')
+        else:
+            print(response.status_code)
 
 if __name__ == '__main__':
     main()
